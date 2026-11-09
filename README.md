@@ -2,9 +2,7 @@
 
 Aplicación web para que un optómetra registre pacientes y sus historias clínicas: antecedentes, agudeza visual, examen clínico, diagnóstico y firma del profesional. Cada profesional ve solo sus propios datos.
 
-**Demo:** https://historia-clinica-two.vercel.app
-
-> Primera versión del sistema, generada como prototipo con v0 y conectada a Supabase. La versión que evolucionó de aquí, con roles, gestión de usuarios y PDF, es [Mega Óptica](https://github.com/Ang3lRamos/mega-optica).
+> **Prototipo, sin mantenimiento.** Primera versión del sistema, generada con v0 y conectada a Supabase. El software que evolucionó de aquí y se entregó a un cliente real, con roles, gestión de usuarios y PDF, es [Mega Óptica](https://github.com/Ang3lRamos/mega-optica).
 
 ## Funcionalidades
 
