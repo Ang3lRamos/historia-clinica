@@ -1,35 +1,74 @@
-# v0-clinical-history-app
+# Historia clínica optométrica
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
+Aplicación web para que un optómetra registre pacientes y sus historias clínicas: antecedentes, agudeza visual, examen clínico, diagnóstico y firma del profesional. Cada profesional ve solo sus propios datos.
 
-## Built with v0
+**Demo:** https://historia-clinica-two.vercel.app
 
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
+> Primera versión del sistema, generada como prototipo con v0 y conectada a Supabase. La versión que evolucionó de aquí, con roles, gestión de usuarios y PDF, es [Mega Óptica](https://github.com/Ang3lRamos/mega-optica).
 
-[Continue working on v0 →](https://v0.app/chat/projects/prj_EQC077ijVJ8uSnMgZk41vkfZ6tAM)
+## Funcionalidades
 
-## Getting Started
+- **Cuentas:** registro, inicio de sesión y confirmación por correo con Supabase Auth. Un middleware renueva la sesión y protege las rutas.
+- **Pacientes:** lista con búsqueda, ficha de cada paciente y su historial de consultas.
+- **Historia clínica en 5 pestañas:**
+  1. Datos generales de la consulta.
+  2. Antecedentes.
+  3. Agudeza visual sin y con corrección, de lejos y de cerca, por ojo (OD, OI y AO).
+  4. Examen clínico.
+  5. Diagnóstico y conducta, con la firma del profesional.
+- **Firma digital:** se guarda en Supabase Storage y queda asociada a la historia.
+- **Panel de inicio** con el resumen de pacientes e historias recientes.
+- Tema claro y oscuro, diseño adaptable a celular.
 
-First, run the development server:
+## Seguridad de los datos
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+Las historias clínicas son datos sensibles, así que el aislamiento entre profesionales vive en la base de datos, no solo en la interfaz:
+
+- Las tablas `profiles`, `patients` y `clinical_histories` tienen **Row Level Security** activado.
+- Las políticas solo permiten leer, crear, editar o borrar filas donde `auth.uid()` coincide con el dueño.
+
+## Stack
+
+- **Next.js 16** (App Router) con React 19 y TypeScript
+- **Supabase:** Postgres, Auth, Storage y RLS, con `@supabase/ssr` para la sesión en el servidor
+- **Tailwind CSS v4** y componentes de **shadcn/ui** (Radix)
+- **React Hook Form** y **zod** para formularios y validación
+- Despliegue en **Vercel**
+
+## Estructura
+
+```
+app/
+  auth/                 login, registro y confirmación
+  dashboard/            panel, pacientes y historias (nueva y detalle)
+components/
+  clinical-history/     formulario de la historia y una pestaña por sección
+  ui/                   componentes de shadcn/ui
+lib/supabase/           clientes de Supabase (navegador, servidor y middleware)
+scripts/                migraciones SQL: perfiles, pacientes, historias y bucket de firmas
+middleware.ts           renovación de sesión y protección de rutas
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Correr en local
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Instala las dependencias:
 
-## Learn More
+   ```bash
+   npm install
+   ```
 
-To learn more, take a look at the following resources:
+2. En un proyecto de Supabase, ejecuta en orden los archivos de `scripts/` (001 a 004) desde el SQL Editor.
+3. Crea un archivo `.env.local` con las variables de tu proyecto:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=https://tu-proyecto.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=tu-anon-key
+   ```
 
-<a href="https://v0.app/chat/api/kiro/clone/Ang3lRamos/v0-clinical-history-app" alt="Open in Kiro"><img src="https://pdgvvgmkdvyeydso.public.blob.vercel-storage.com/open%20in%20kiro.svg?sanitize=true" /></a>
+4. Arranca el servidor:
+
+   ```bash
+   npm run dev
+   ```
+
+   Abre http://localhost:3000.
